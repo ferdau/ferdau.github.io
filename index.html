@@ -1,0 +1,847 @@
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>FerdOS</title>
+		<meta content="Personal website" name="description">
+		<meta content="Personal website Ferdau" property="og:title">
+		<meta content="Personal website Ferdau" property="og:description">
+		<meta content="width=device-width, initial-scale=1" name="viewport">
+		<link href="https://daks2k3a4ib2z.cloudfront.net/57b0b52271bead8852aa6781/css/windows-95.webflow.3868d22fd.css" rel="stylesheet" type="text/css">
+		<script src="https://ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js"></script>
+		<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic,700,700italic,800,800italic">
+		<script type="text/javascript">WebFont.load({
+			google: {
+	    		families: ["Open Sans:300,300italic,400,400italic,600,600italic,700,700italic,800,800italic"]
+	  		}
+		});</script>
+		<style>
+			@font-face {
+				font-family: 'w95fa';
+				src: url('fonts/w95fa.otf') format('opentype'),
+					url('fonts/w95fa.woff2') format('woff2'), /* Super Modern Browsers */
+					url('fonts/w95fa.woff') format('woff'); /* Pretty Modern Browsers */
+			}
+
+			* {
+				margin: 0;
+				padding: 0;
+				font-family: w95fa, 'Open Sans', monospace;
+				font-size: 16px;
+				/*cursor: default; /* TODO: wait; Selection on text ??? */
+				-webkit-user-select: none; /* Safari */        
+				-moz-user-select: none; /* Firefox */
+				-ms-user-select: none; /* IE10+/Edge */
+				user-select: none; /* Standard */
+			}
+
+			a, #open-windows > div > div, .control_close, #start-button, #start-menu > div > div > div {
+				cursor: pointer;
+			}
+
+			body {
+				background-color: #018282;
+				overflow: hidden;
+			}
+
+			.hidden {
+				display: none;
+			}
+
+			#taskbar {
+				background-color: #c0c0c0;
+				border-top: 1px solid #fff;
+				min-height: 40px;
+				width: 100%;
+				position: fixed;
+				bottom: 0;
+				display: flex;
+			}
+
+			#taskbar:before {
+				content: " ";
+				position: absolute;
+				z-index: -1;
+				top: -2px;
+    			left: 0;
+    			right: 0;
+				border: 1px solid #dfdfdf;
+			}
+
+			#taskbar > div {
+				height: 33px;
+				margin: 3px;
+				align-items: center;
+				justify-content: center;
+			}
+
+			#taskbar > div--top {
+				align-self: flex-start;
+			}
+
+			#taskbar > div--bottom {
+				align-self: flex-end;
+			}
+
+			#taskbar #start-button {
+				width: 81px;
+				background-size: cover;
+				background-image: url('img/start.png');
+			}
+
+			#taskbar #start-button:hover, #taskbar #start-button.hover {
+				background-image: url('img/start_hover.png');
+			}
+
+			#taskbar #clock {
+				width: 63px;
+				text-align: center;
+				border-right: 1px solid #fff;
+				border-bottom: 1px solid #fff;
+				border-left: 1px solid #808080;
+				border-top: 1px solid #808080;
+				display: table;
+			}
+
+			#taskbar #clock > div#clock-value {
+				display: table-cell;
+				vertical-align: middle;
+			}
+
+			#taskbar #open-windows {
+				flex-grow: 1;
+				height: auto !important;
+			}
+
+			#taskbar #open-windows > div > div {
+				display: inline-table;
+				height: 100%;
+				width: 200px;
+				border-top: 1px solid #fff;
+				border-left: 1px solid #fff;
+				border-bottom: 1px solid #000;
+				border-right: 1px solid #000;
+			}
+
+			#taskbar #open-windows > div > div > div {
+				display: table-cell;
+				vertical-align: middle;
+				height: 100%;
+				border-top: 1px solid #dfd8df;
+				border-left: 1px solid #dfd8df;
+				border-bottom: 1px solid #7f787f;
+				border-right: 1px solid #7f787f;
+			}
+
+			#taskbar #open-windows > div > div.active {
+				background-image: url('img/active_bg.png');
+				background-size: 6px 6px;
+			}
+
+			#taskbar #open-windows > div > div:hover, #taskbar #open-windows > div > div.active {
+				border-top: 1px solid #000;
+				border-left: 1px solid #000;
+				border-bottom: 1px solid #fff;
+				border-right: 1px solid #fff;
+			}
+
+			#taskbar #open-windows > div > div:hover > div, #taskbar #open-windows > div > div.active > div {
+				border-top: 1px solid #7f787f;
+				border-left: 1px solid #7f787f;
+				border-bottom: 1px solid #dfd8df;
+				border-right: 1px solid #dfd8df;
+			}
+
+			.window {
+				position: absolute;
+				background-color: #c3c7cb;
+				border-left: 1px solid #c3c7cb;
+				border-top: 1px solid #c3c7cb;
+				border-right: 1px solid #000;
+				border-bottom: 1px solid #000;
+				z-index: 10;
+				white-space: nowrap;
+			}
+
+			.window div.window-body {
+				padding: 20px;
+				max-height: 70vh;
+    			overflow-y: auto;
+			}
+
+			.window div.window-body ul {
+				padding-left: 20px;
+			}
+
+			.window > div {
+				border-left: 1px solid #fff;
+				border-top: 1px solid #fff;
+				border-right: 1px solid #000;
+				border-bottom: 1px solid #000;
+			}
+
+			.window > div > div {
+				border: 1px solid #c3c7cb;
+			}
+
+			.window .header {
+				background-color: #808080;
+				color: #cbcbcb;
+				height: 24px;
+				line-height: 24px;
+				font-size: 16px;
+				margin: 0;
+				display: flex;
+			}
+
+			.window .header span.title {
+				flex-grow: 1;
+			}
+
+			.window .header .controls {
+				margin: 2px;
+			}
+
+			.window .header .controls > span {
+				margin-left: 2px;
+			}
+
+			.window .header .controls span {
+				display: inline-block;
+				border-top: 1px solid #fff;
+				border-left: 1px solid #fff;
+				border-bottom: 1px solid #000;
+				border-right: 1px solid #000;
+			}
+
+			.window .header .controls span > span {
+				background-position: center center;
+				background-color: #c3c7cb;
+				background-repeat: no-repeat;
+				width: 16px;
+				height: 16px;
+				border-top: 1px solid #dfdfdf;
+				border-left: 1px solid #dfdfdf;
+				border-bottom: 1px solid #7f7f7f;
+				border-right: 1px solid #7f7f7f;
+			}
+
+			.window .header .controls span:hover {
+				border-bottom: 1px solid #fff;
+				border-right: 1px solid #fff;
+				border-top: 1px solid #000;
+				border-left: 1px solid #000;
+			}
+
+			.window .header .controls span:hover > span {
+				border-bottom: 1px solid #dfdfdf;
+				border-right: 1px solid #dfdfdf;
+				border-top: 1px solid #7f7f7f;
+				border-left: 1px solid #7f7f7f;
+			}
+
+			.window .header .controls .control_close > span {
+				background-image: url('img/x.png');
+			}
+
+			.window .header .controls .control_minimise {
+				display: none;
+			}
+
+			.window .header .controls .control_minimise > span {
+				background-image: url('img/minimize.png');
+			}
+
+			.window.active {
+				z-index: 20;
+			}
+
+			.window.active .header {
+				background-color: #020080;
+				color: #fff;
+			}
+
+			#application-content {
+				display: none;
+			}
+
+			i {
+				display: inline-block;
+				background-size: contain;
+				background-position: center center;
+				background-repeat: no-repeat;
+			}
+
+			.window i {
+				width: 18px;
+				height: 18px;
+				margin: 2px 4px 0 4px;
+			}
+
+			#open-windows i {
+				width: 20px;
+				height: 20px;
+				margin: 2px 4px 0 4px;
+			}
+
+			i.filetype-text {
+				background-image: url('icons/textfile.png');
+			}
+
+			i.filetype-recycler {
+				background-image: url('icons/recycler.png');
+			}
+
+			#start-menu {
+				position: fixed;
+				left: 3px;
+				bottom: 35px;
+				z-index: 100;
+				background-color: #c0c0c0;
+				border-left: 1px solid #c0c0c0;
+				border-top: 1px solid #c0c0c0;
+				border-right: 1px solid #000;
+				border-bottom: 1px solid #000;
+			}
+
+			#start-menu > div > div#start-menu-logo {
+				position: absolute;
+				background-color: #808080;
+				transform: rotate(-90deg);
+				color: #c0c0c0;
+				padding: 6px 10px;
+				margin-left: 0;
+
+				left: -32px;
+				top: 32px;
+				width: 96px;
+			}
+
+			#start-menu > div {
+				border-left: 1px solid #fff;
+				border-top: 1px solid #fff;
+				border-right: 1px solid #808080;
+				border-bottom: 1px solid #808080;
+				width: 240px;
+				position: relative;
+			}
+
+			#start-menu.open {
+				display: block;
+			}
+
+			#start-menu > div > div {
+				margin-left: 32px;
+				padding-left: 20px;
+				position: relative;
+			}
+
+			#start-menu > div > div > div {
+				display: none;
+			}
+
+			#start-menu > div > div:hover {
+				background-color: #000080;
+			}
+
+			#start-menu > div > div:hover > div:nth-child(1) {
+				color: #fff;
+			}
+
+			#start-menu > div > div > div:nth-child(1) {
+				height: 48px;
+				padding-top: 14px;
+				display: block;
+			}
+
+			#start-menu > div > div:hover > div:not(:nth-child(1)) {
+				display: block;
+				position: absolute;
+				left: 200px;
+				top: -16px;
+				border-left: 1px solid #fff;
+				border-top: 1px solid #fff;
+				border-right: 1px solid #808080;
+				border-bottom: 1px solid #808080;
+			}
+
+			#start-menu > div > div:hover > div:not(:nth-child(1)) > div {
+				background-color: #c0c0c0;
+				border-left: 1px solid #fff;
+				border-top: 1px solid #fff;
+				border-right: 1px solid #000;
+				border-bottom: 1px solid #000;
+			}
+
+			#start-menu > div > div:hover > div:not(:nth-child(1)) > div {
+				background-color: #c0c0c0;
+				border-left: 1px solid #fff;
+				border-top: 1px solid #fff;
+				border-right: 1px solid #000;
+				border-bottom: 1px solid #000;
+			}
+			
+			#start-menu > div > div > div:not(:nth-child(1)) > div > div:hover > *,
+			 #start-menu > div > div > div:not(:nth-child(1)) > div > div:hover > a {
+				background-color: #000080;
+				color: #fff;
+			}
+
+			#start-menu > div > div:hover > div:not(:nth-child(1)) > div > div > * {
+				display: block;
+				height: 34px;
+				width: 240px;
+				padding: 6px 10px;
+			}
+
+			#start-menu a {
+				color: #000;
+				text-decoration: none;
+			}
+
+			::-webkit-scrollbar {
+				width: 16px;
+				height: 16px;
+				background: none;
+			}
+
+			::-webkit-scrollbar-thumb, ::-webkit-scrollbar-button {
+				width: 16px;
+				height: 16px;
+				background: silver;
+				box-shadow: inset 1px 1px #dfdfdf, inset -1px -1px gray;
+				border: 1px solid;
+				border-color: silver #000 #000 silver;
+			}
+
+			::-webkit-scrollbar-track {
+				background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgLTAuNSAyIDIiIHNoYXBlLXJlbmRlcmluZz0iY3Jpc3BFZGdlcyI+CjxtZXRhZGF0YT5NYWRlIHdpdGggUGl4ZWxzIHRvIFN2ZyBodHRwczovL2NvZGVwZW4uaW8vc2hzaGF3L3Blbi9YYnh2Tmo8L21ldGFkYXRhPgo8cGF0aCBzdHJva2U9IiNjMGMwYzAiIGQ9Ik0wIDBoMU0xIDFoMSIgLz4KPC9zdmc+");
+				background-size: 4px;
+			}
+
+			::-webkit-scrollbar-button {
+				background-repeat: no-repeat;
+				background-size: 16px;
+			}
+
+			::-webkit-scrollbar-button:single-button:vertical:decrement {
+				background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgLTAuNSAxNiAxNiIgc2hhcGUtcmVuZGVyaW5nPSJjcmlzcEVkZ2VzIj4KPG1ldGFkYXRhPk1hZGUgd2l0aCBQaXhlbHMgdG8gU3ZnIGh0dHBzOi8vY29kZXBlbi5pby9zaHNoYXcvcGVuL1hieHZOajwvbWV0YWRhdGE+CjxwYXRoIHN0cm9rZT0iIzAwMDAwMCIgZD0iTTcgNWgxTTYgNmgzTTUgN2g1TTQgOGg3IiAvPgo8L3N2Zz4=");
+			}
+
+			::-webkit-scrollbar-button:single-button:vertical:increment {
+				background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgLTAuNSAxNiAxNiIgc2hhcGUtcmVuZGVyaW5nPSJjcmlzcEVkZ2VzIj4KPG1ldGFkYXRhPk1hZGUgd2l0aCBQaXhlbHMgdG8gU3ZnIGh0dHBzOi8vY29kZXBlbi5pby9zaHNoYXcvcGVuL1hieHZOajwvbWV0YWRhdGE+CjxwYXRoIHN0cm9rZT0iIzAwMDAwMCIgZD0iTTQgNWg3TTUgNmg1TTYgN2gzTTcgOGgxIiAvPgo8L3N2Zz4=");
+			}
+
+			::-webkit-scrollbar-button:single-button:horizontal:decrement {
+				background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgLTAuNSAxNiAxNiIgc2hhcGUtcmVuZGVyaW5nPSJjcmlzcEVkZ2VzIj4KPG1ldGFkYXRhPk1hZGUgd2l0aCBQaXhlbHMgdG8gU3ZnIGh0dHBzOi8vY29kZXBlbi5pby9zaHNoYXcvcGVuL1hieHZOajwvbWV0YWRhdGE+CjxwYXRoIHN0cm9rZT0iIzAwMDAwMCIgZD0iTTggM2gxTTcgNGgyTTYgNWgzTTUgNmg0TTYgN2gzTTcgOGgyTTggOWgxIiAvPgo8L3N2Zz4=");
+			}
+
+			::-webkit-scrollbar-button:single-button:horizontal:increment {
+				background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgLTAuNSAxNiAxNiIgc2hhcGUtcmVuZGVyaW5nPSJjcmlzcEVkZ2VzIj4KPG1ldGFkYXRhPk1hZGUgd2l0aCBQaXhlbHMgdG8gU3ZnIGh0dHBzOi8vY29kZXBlbi5pby9zaHNoYXcvcGVuL1hieHZOajwvbWV0YWRhdGE+CjxwYXRoIHN0cm9rZT0iIzAwMDAwMCIgZD0iTTYgM2gxTTYgNGgyTTYgNWgzTTYgNmg0TTYgN2gzTTYgOGgyTTYgOWgxIiAvPgo8L3N2Zz4=");
+			}
+
+			::-webkit-scrollbar-corner {
+				background: silver;
+			}
+		</style>
+		<script>
+			document.addEventListener("DOMContentLoaded", function() {
+				const STORE_WINDOW_COORDINATES = false;
+				let startMenu = document.getElementById("start-menu");
+				let startButton = document.getElementById("start-button");
+				// UTILS
+				function leadingZero(i) {
+					return i < 10 ? '0'+i : i;
+				}
+
+				// WIN UI FUNCTIONALITY
+				function updateClock() {
+					var today = new Date();
+					var h = leadingZero(today.getHours());
+					var m = leadingZero(today.getMinutes());
+					document.getElementById('clock-value').innerHTML = h + ":" + m;
+					t = setTimeout(function() {
+						updateClock()
+					}, 10000);
+				}
+
+				startButton.addEventListener("mouseover", function() {
+					startMenu.classList.remove("hidden");
+				});
+
+				startButton.addEventListener("mouseout", function() {
+					startMenu.classList.add("hidden");
+				});
+
+				startMenu.addEventListener("mouseover", function() {
+					startMenu.classList.remove("hidden");
+					startButton.classList.add("hover");
+				});
+
+				startMenu.addEventListener("mouseout", function() {
+					startMenu.classList.add("hidden");
+					startButton.classList.remove("hover");
+				});
+
+				// WIN WINDOW MANAGEMENT
+				function getNewWindow(applicationName) {
+					let c1 = document.createElement("div");
+					c1.classList.add("window");
+					let c2 = document.createElement("div");
+					let c3 = document.createElement("div");
+
+					let header = document.createElement("div");
+					let icon = document.createElement("i");
+					let title = document.createElement("span");
+					let controls = document.createElement("span");
+					let close = document.createElement("span");
+					let close2 = document.createElement("span");
+					let minimise = document.createElement("span");
+					let minimise2 = document.createElement("span");
+
+					header.classList.add("header");
+					title.classList.add("title");
+					controls.classList.add("controls");
+					close.classList.add("control_close");
+					minimise.classList.add("control_minimise");
+
+					icon.classList.add("filetype-"+applications[applicationName].icon)
+					title.innerHTML = applications[applicationName].title;
+
+					close.appendChild(close2);
+					minimise.appendChild(minimise2);
+
+					controls.appendChild(minimise);
+					controls.appendChild(close);
+
+					header.appendChild(icon);
+					header.appendChild(title);
+					header.appendChild(controls);
+					
+					c3.appendChild(header);
+
+					let clone = document.getElementById("application-content").querySelectorAll("#"+applicationName)[0].cloneNode(true);
+					clone.classList.add("window-body");
+					c3.appendChild(clone);
+
+					c2.appendChild(c3);
+					c1.append(c2);
+					c1.id = "window-" + applicationName;
+
+					makeWindowDragable(applicationName, c1, header);
+
+					close.onclick = function() {
+						closeApplication(applicationName);
+					};
+
+					function setWindowFromStorage() {
+						c1.style.left = window.localStorage.getItem(applicationName + '_x');
+						c1.style.top = window.localStorage.getItem(applicationName + '_y');
+						return c1;
+					}
+
+					function setWindowAtRandom() {
+						let windowWidth = window.innerWidth
+							|| document.documentElement.clientWidth
+							|| document.getElementsByTagName('body')[0].clientWidth;
+
+						let windowHeight = window.innerHeight
+							|| document.documentElement.clientHeight
+							|| document.getElementsByTagName('body')[0].clientHeight;
+						let minOffset = 50;
+						c1.style.left = minOffset + Math.random() * ((windowWidth / 2) - minOffset);
+						c1.style.top = minOffset + Math.random() * ((windowHeight / 2) - minOffset);
+						return c1;
+					}
+
+					if(STORE_WINDOW_COORDINATES) {
+						if(window.localStorage.getItem(applicationName + '_x' == null)) {
+							return setWindowAtRandom();
+						} else {
+							return setWindowFromStorage();
+						}
+					} else {
+						return setWindowAtRandom();
+					}
+				}
+
+				function getNewTaskbarItem(applicationName) {
+					let c1 = document.createElement("div");
+					let c2 = document.createElement("div");
+
+					c2.innerHTML = "<i class='filetype-"+applications[applicationName].icon+"'></i>" + applications[applicationName].title;
+					c1.appendChild(c2);
+					c1.id = "taskbar-" + applicationName;
+					return c1;
+				}
+
+				function makeWindowDragable(applicationName, container, header) {
+					var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+					header.onmousedown = dragMouseDown;
+
+					function dragMouseDown(e) {
+						
+						e = e || window.event;
+						e.preventDefault();
+						pos3 = e.clientX;
+						pos4 = e.clientY;
+						document.onmouseup = closeDragElement;
+						document.onmousemove = elementDrag;
+					}
+
+					function elementDrag(e) {
+						e = e || window.event;
+						e.preventDefault();
+						// calculate the new cursor position:
+						pos1 = pos3 - e.clientX;
+						pos2 = pos4 - e.clientY;
+						pos3 = e.clientX;
+						pos4 = e.clientY;
+						// set the element's new position:
+						container.style.top = (container.offsetTop - pos2) + "px";
+						container.style.left = (container.offsetLeft - pos1) + "px";
+					}
+
+					function closeDragElement() {
+						document.onmouseup = null;
+						document.onmousemove = null;
+
+						// TODO: 2 localstorage writes for coordinates? :(
+						window.localStorage.setItem(applicationName + '_x', container.style.left);
+						window.localStorage.setItem(applicationName + '_y', container.style.top);
+					}
+				}
+
+				// APPLICATION MANAGEMENT
+				let applications = {
+					blog: {
+						title: "Blog",
+						icon: "text"
+					},
+					backlog: {
+						title: "Past projects",
+						icon: "recycler"
+					},
+					introduction: {
+						title: "Hello!",
+						icon: "text"
+					},
+					resume: {
+						title: "Curriculum Vitae",
+						icon: "text"
+					}
+				}
+
+				function closeApplication(name) {
+					document.getElementById("window-" + name).remove();
+					document.getElementById("taskbar-" + name).remove();
+				}
+
+				function launchApplication(name) {
+					let existingWindow = document.getElementById("window-" + name);
+					let existingTaskbarItem = document.getElementById("taskbar-" + name);
+					if(existingWindow != undefined && existingTaskbarItem != null) {
+						console.log("RELAUNCHING " + name);
+						let activeWindows = document.querySelectorAll("#working-area .window.active");
+						for (var i = activeWindows.length - 1; i >= 0; i--) {
+							activeWindows[i].classList.remove("active");
+						}
+
+						let activeTaskbarItems = document.querySelectorAll("#open-windows .active");
+						for (var i = activeTaskbarItems.length - 1; i >= 0; i--) {
+							activeTaskbarItems[i].classList.remove("active");
+						}
+
+						existingWindow.classList.add("active");
+						existingTaskbarItem.classList.add("active");
+						return;
+					}
+
+					let w = getNewWindow(name);
+					let t = getNewTaskbarItem(name);
+
+					w.onclick = function() {
+						activate();
+					}
+
+					t.onclick = function() {
+						activateOrDeactivate();
+					}
+
+					function activateOrDeactivate() {
+						if(w.classList.contains("active")) {
+							deactivate();
+						} else {
+							activate();
+						}
+					}
+
+					function deactivate() {
+						w.classList.remove("active");
+						t.classList.remove("active");
+					}
+
+					function activate() {
+						// Activate
+						let activeWindows = document.querySelectorAll("#working-area .window.active");
+						for (var i = activeWindows.length - 1; i >= 0; i--) {
+							activeWindows[i].classList.remove("active");
+						}
+
+						let activeTaskbarItems = document.querySelectorAll("#open-windows .active");
+						for (var i = activeTaskbarItems.length - 1; i >= 0; i--) {
+							activeTaskbarItems[i].classList.remove("active");
+						}
+
+						w.classList.add("active");
+						t.classList.add("active");
+					}
+
+					document.getElementById("working-area").appendChild(w);
+					document.getElementById("open-windows").children[0].appendChild(t);
+					activate();
+				}
+
+				function populateProgramList() {
+					const list = document.getElementById('programs-list');
+					Object.entries(applications).map(item => {
+						let c1 = document.createElement("div");
+						let c2 = document.createElement("div");
+
+						c2.innerHTML = "<i class='filetype-"+item[1].icon+"'></i>" + item[1].title;
+						c1.appendChild(c2);
+						c1.onclick = function() {
+							launchApplication(item[0]);
+						};
+						list.appendChild(c1);
+					});
+				}
+
+				// LET'S GO
+				updateClock();
+				populateProgramList();
+				launchApplication("introduction");
+			});
+		</script>
+	</head>
+	<body>
+		<div id="application-content">
+			<div id="introduction">
+				<div>
+					<h3>Welcome to my website</h3>
+					<h4>About me</h4>
+					<ul>
+						<li>Ferdau Daems</li>
+						<li>33 years old</li>
+						<li>Living in Kaster, West-Vlaanderen</li>
+						<li>Got a wife and two lovely kids</li>
+						<li>Volleybal player</li>
+					</ul>
+					<h4>Work / Techincal</h4>
+					<ul>
+						<li>Business Analyst at Stova</li>
+						<li>Mobile App specialist</li>
+						<li>HTML / JS / CSS hobbyist</li>
+						<li>Reverse engineering</li>
+					</ul>
+				</div>
+			</div>
+			<div id="backlog">
+				<div>
+					<h4>Projects I worked on</h4>
+					<ul>
+						<li>Chrome extensions for automation</li>
+						<li>Google Glass app</li>
+						<li>Atlasian Forge app</li>
+						<li>BeReal unblur MOD</li>
+					</ul>
+				</div>
+			</div>
+			<div id="resume">
+				<div>
+					<a target="_blank" href="assets/Ferdau Daems Resume.pdf">2022 Version (PDF)</a>
+					<h3>Ferdau Daems</h3>
+					<p>ferdau@gmail.com – Anzegem, Belgium</p>
+					<h4>Work experience</h4>
+					<h5>Stova – Sep. 2011 - Present</h5>
+					<h6>Business Analyst – Apr. 2022 - Present</h6>
+					<ul>
+						<li>Mobile, Web and Flutter application</li>
+						<li>Requirement gathering with multiple stakeholders</li>
+						<li>Create requirements, documentation, and presentations</li>
+						<li>Help solve technical problems</li>
+						<li>Focus on reducing quick response time tickets</li>
+						<li>Implementation of SCRUM</li>
+					</ul>
+					<h6>Lead Android Developer – Sep. 2011 - Apr. 2022</h6>
+					<ul>
+						<li>Lead on the Android project</li>
+						<li>Work together with onshore and offshore team members</li>
+						<li>Coach junior developers</li>
+						<li>Automate development processes</li>
+						<li>Web development (frontend and backend)</li>
+					</ul>
+					<h4>Education</h4>
+					<h5>KaHo Sint-Lieven, Ghent</h5>
+					<h6>Professional Bachelor, Electronics & Computer Science</h6>
+					<h4>Skills & Interests</h4>
+					<h5>Personal Skills</h5>
+					<ul>
+						<li>Problem solving</li>
+						<li>Wide technical knowledge</li>
+						<li>Structured</li>
+						<li>Keeping communication simple and to the point</li>
+						<li>Automating processes</li>
+						<li>Eye for UI / UX design</li>
+					</ul>
+					<h5>Technical Skills</h5>
+					<ul>
+						<li>Mobile app development (Android)</li>
+						<li>HTML / CSS / JS</li>
+						<li>Chrome Extensions</li>
+						<li>API integrations</li>
+						<li>Database design (MYSQL, SQLITE)</li>
+						<li>Git</li>
+					</ul>
+					<h5>Interests</h5>
+					<ul>
+						<li>Volleybal</li>
+						<li>Trips with the kids and wife</li>
+						<li>Good food</li>
+					</ul>
+				</div>
+			</div>
+			<div id="blog">
+				<div>
+					<h4>COMING SOON (or not).</h4>
+				</div>
+			</div>
+		</div>
+		<div id="working-area">
+		</div>
+		<div id="start-menu" class="hidden">
+			<div>
+				<div id="start-menu-logo">FerdOS</div>
+				<div>
+					<div>Programs</div>
+					<div>
+						<div id="programs-list"></div>
+					</div>
+				</div>
+				<div>
+					<div>Social</div>
+					<div>
+						<div>
+							<div><a target="_blank" href="https://www.linkedin.com/in/ferdau/">LinkedIn</a></div>
+							<div><a target="_blank" href="https://instagram.com/ferdau">Instagram</a></div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div id="taskbar">
+			<div id="start-button"></div>
+			<div id="open-windows"><div></div></div>
+			<div id="clock"><div id="clock-value"></div></div>
+		</div>
+	</body>
+</html>

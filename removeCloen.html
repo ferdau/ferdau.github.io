@@ -1,0 +1,505 @@
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>FerdOS</title>
+		<meta content="Personal website" name="description">
+		<meta content="Personal website Ferdau" property="og:title">
+		<meta content="Personal website Ferdau" property="og:description">
+		<meta content="width=device-width, initial-scale=1" name="viewport">
+		<style>
+			@font-face {
+				font-family: 'w95fa';
+				src: url('fonts/w95fa.otf') format('opentype'),
+					url('fonts/w95fa.woff2') format('woff2'), /* Super Modern Browsers */
+					url('fonts/w95fa.woff') format('woff'); /* Pretty Modern Browsers */
+			}
+
+			* {
+				margin: 0;
+				padding: 0;
+				font-family: w95fa, 'Open Sans', monospace;
+				font-size: 16px;
+				cursor: default; /* TODO: wait; Selection on text ??? */
+				-webkit-user-select: none; /* Safari */        
+				-moz-user-select: none; /* Firefox */
+				-ms-user-select: none; /* IE10+/Edge */
+				user-select: none; /* Standard */
+			}
+
+			body {
+				background-color: #018282;
+				overflow: hidden;
+			}
+
+			#taskbar {
+				background-color: #c0c0c0;
+				border-top: 1px solid #fff;
+				min-height: 40px;
+				width: 100%;
+				position: fixed;
+				bottom: 0;
+				display: flex;
+			}
+
+			#taskbar:before {
+				content: " ";
+				position: absolute;
+				z-index: -1;
+				top: -2px;
+    			left: 0;
+    			right: 0;
+				border: 1px solid #dfdfdf;
+			}
+
+			#taskbar > div {
+				height: 33px;
+				margin: 3px;
+				align-items: center;
+				justify-content: center;
+			}
+
+			#taskbar > div--top {
+				align-self: flex-start;
+			}
+
+			#taskbar > div--bottom {
+				align-self: flex-end;
+			}
+
+			#taskbar #start-button {
+				width: 81px;
+				background-size: cover;
+				background-image: url('img/start.png');
+			}
+
+			#taskbar #start-button:hover {
+				background-image: url('img/start_hover.png');
+			}
+
+			#taskbar #clock {
+				width: 63px;
+				text-align: center;
+				border-right: 1px solid #fff;
+				border-bottom: 1px solid #fff;
+				border-left: 1px solid #808080;
+				border-top: 1px solid #808080;
+				display: table;
+			}
+
+			#taskbar #clock > div#clock-value {
+				display: table-cell;
+				vertical-align: middle;
+			}
+
+			#taskbar #open-windows {
+				flex-grow: 1;
+				height: auto !important;
+			}
+
+			#taskbar #open-windows > div > div {
+				display: inline-table;
+				height: 100%;
+				width: 200px;
+				border-top: 1px solid #fff;
+				border-left: 1px solid #fff;
+				border-bottom: 1px solid #000;
+				border-right: 1px solid #000;
+			}
+
+			#taskbar #open-windows > div > div > div {
+				display: table-cell;
+				vertical-align: middle;
+				height: 100%;
+				border-top: 1px solid #dfd8df;
+				border-left: 1px solid #dfd8df;
+				border-bottom: 1px solid #7f787f;
+				border-right: 1px solid #7f787f;
+			}
+
+			#taskbar #open-windows > div > div.active {
+				background-image: url('img/active_bg.png');
+				background-size: 6px 6px;
+			}
+
+			#taskbar #open-windows > div > div:hover, #taskbar #open-windows > div > div.active {
+				border-top: 1px solid #000;
+				border-left: 1px solid #000;
+				border-bottom: 1px solid #fff;
+				border-right: 1px solid #fff;
+			}
+
+			#taskbar #open-windows > div > div:hover > div, #taskbar #open-windows > div > div.active > div {
+				border-top: 1px solid #7f787f;
+				border-left: 1px solid #7f787f;
+				border-bottom: 1px solid #dfd8df;
+				border-right: 1px solid #dfd8df;
+			}
+
+			.window {
+				position: absolute;
+				background-color: #c3c7cb;
+				border-left: 1px solid #c3c7cb;
+				border-top: 1px solid #c3c7cb;
+				border-right: 1px solid #000;
+				border-bottom: 1px solid #000;
+				z-index: 10;
+			}
+
+			.window div.window-body {
+				padding: 20px;
+			}
+
+			.window div.window-body ul {
+				padding-left: 20px;
+			}
+
+			.window > div {
+				border-left: 1px solid #fff;
+				border-top: 1px solid #fff;
+				border-right: 1px solid #000;
+				border-bottom: 1px solid #000;
+			}
+
+			.window > div > div {
+				border: 1px solid #c3c7cb;
+			}
+
+			.window .header {
+				background-color: #808080;
+				color: #cbcbcb;
+				height: 24px;
+				line-height: 24px;
+				font-size: 16px;
+				margin: 0;
+				display: flex;
+			}
+
+			.window .header span.title {
+				flex-grow: 1;
+			}
+
+			.window .header .controls {
+				margin: 2px;
+			}
+
+			.window .header .controls > span {
+				margin-left: 2px;
+			}
+
+			.window .header .controls span {
+				display: inline-block;
+				border-top: 1px solid #fff;
+				border-left: 1px solid #fff;
+				border-bottom: 1px solid #000;
+				border-right: 1px solid #000;
+			}
+
+			.window .header .controls span > span {
+				background-position: center center;
+				background-color: #c3c7cb;
+				background-repeat: no-repeat;
+				width: 16px;
+				height: 16px;
+				border-top: 1px solid #dfdfdf;
+				border-left: 1px solid #dfdfdf;
+				border-bottom: 1px solid #7f7f7f;
+				border-right: 1px solid #7f7f7f;
+			}
+
+			.window .header .controls span:hover {
+				border-bottom: 1px solid #fff;
+				border-right: 1px solid #fff;
+				border-top: 1px solid #000;
+				border-left: 1px solid #000;
+			}
+
+			.window .header .controls span:hover > span {
+				border-bottom: 1px solid #dfdfdf;
+				border-right: 1px solid #dfdfdf;
+				border-top: 1px solid #7f7f7f;
+				border-left: 1px solid #7f7f7f;
+			}
+
+			.window .header .controls .control_close > span {
+				background-image: url('img/x.png');
+			}
+
+			.window .header .controls .control_minimise {
+				display: none;
+			}
+
+			.window .header .controls .control_minimise > span {
+				background-image: url('img/minimize.png');
+			}
+
+			.window.active {
+				z-index: 20;
+			}
+
+			.window.active .header {
+				background-color: #020080;
+				color: #fff;
+			}
+
+			i {
+				display: inline-block;
+				background-size: contain;
+				background-position: center center;
+				background-repeat: no-repeat;
+			}
+
+			.window i {
+				width: 18px;
+				height: 18px;
+				margin: 2px 4px 0 4px;
+			}
+
+			#open-windows i {
+				width: 20px;
+				height: 20px;
+				margin: 2px 4px 0 4px;
+			}
+
+			i.filetype-text {
+				background-image: url('icons/textfile.png');
+			}
+
+			i.filetype-recycler {
+				background-image: url('icons/recycler.png');
+			}
+		</style>
+		<script>
+			document.addEventListener("DOMContentLoaded", function() {
+				// UTILS
+				function leadingZero(i) {
+					return i < 10 ? '0'+i : i;
+				}
+
+				// WIN UI FUNCTIONALITY
+				function updateClock() {
+					var today = new Date();
+					var h = leadingZero(today.getHours());
+					var m = leadingZero(today.getMinutes());
+					document.getElementById('clock-value').innerHTML = h + ":" + m;
+					t = setTimeout(function() {
+						updateClock()
+					}, 10000);
+				}
+
+				// WIN WINDOW MANAGEMENT
+				function getNewWindow(applicationName) {
+					let header = document.createElement("div");
+					let icon = document.createElement("i");
+					let title = document.createElement("span");
+					let controls = document.createElement("span");
+					let close = document.createElement("span");
+					let close2 = document.createElement("span");
+					let minimise = document.createElement("span");
+					let minimise2 = document.createElement("span");
+
+					header.classList.add("header");
+					title.classList.add("title");
+					controls.classList.add("controls");
+					close.classList.add("control_close");
+					minimise.classList.add("control_minimise");
+
+					icon.classList.add("filetype-"+applications[applicationName].icon)
+					title.innerHTML = applications[applicationName].title;
+
+					close.appendChild(close2);
+					minimise.appendChild(minimise2);
+
+					controls.appendChild(minimise);
+					controls.appendChild(close);
+
+					header.appendChild(icon);
+					header.appendChild(title);
+					header.appendChild(controls);
+
+					let body = document.getElementById(applicationName);
+					body.prepend(header);
+
+					makeWindowDragable(applicationName, body, header);
+
+					close.onclick = function() {
+						closeApplication(applicationName);
+					};
+
+					if(window.localStorage.getItem(applicationName + '_x' == null)) {
+						let windowWidth = window.innerWidth
+						|| document.documentElement.clientWidth
+						|| document.getElementsByTagName('body')[0].clientWidth;
+
+						let windowHeight = window.innerHeight
+							|| document.documentElement.clientHeight
+							|| document.getElementsByTagName('body')[0].clientHeight;
+
+						let minOffset = 50;
+						body.style.left = minOffset + Math.random() * ((windowWidth / 2) - minOffset);
+						body.style.top = minOffset + Math.random() * ((windowHeight / 2) - minOffset);
+						return body;
+					} else {
+						body.style.left = window.localStorage.getItem(applicationName + '_x');
+						body.style.top = window.localStorage.getItem(applicationName + '_y');
+						return body;
+					}
+				}
+
+				function getNewTaskbarItem(applicationName) {
+					let c1 = document.createElement("div");
+					let c2 = document.createElement("div");
+
+					c2.innerHTML = "<i class='filetype-"+applications[applicationName].icon+"'></i>" + applications[applicationName].title;
+					c1.appendChild(c2);
+					c1.id = "taskbar-" + applicationName;
+					return c1;
+				}
+
+				function makeWindowDragable(applicationName, container, header) {
+					var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+					header.onmousedown = dragMouseDown;
+
+					function dragMouseDown(e) {
+						e = e || window.event;
+						e.preventDefault();
+						pos3 = e.clientX;
+						pos4 = e.clientY;
+						document.onmouseup = closeDragElement;
+						document.onmousemove = elementDrag;
+					}
+
+					function elementDrag(e) {
+						e = e || window.event;
+						e.preventDefault();
+						// calculate the new cursor position:
+						pos1 = pos3 - e.clientX;
+						pos2 = pos4 - e.clientY;
+						pos3 = e.clientX;
+						pos4 = e.clientY;
+						// set the element's new position:
+						container.style.top = (container.offsetTop - pos2) + "px";
+						container.style.left = (container.offsetLeft - pos1) + "px";
+					}
+
+					function closeDragElement() {
+						document.onmouseup = null;
+						document.onmousemove = null;
+
+						// TODO: 2 localstorage writes for coordinates? :(
+						window.localStorage.setItem(applicationName + '_x', container.style.left);
+						window.localStorage.setItem(applicationName + '_y', container.style.top);
+					}
+				}
+
+				// APPLICATION MANAGEMENT
+				let applications = {
+					todolist: {
+						title: "Todo List",
+						icon: "text"
+					},
+					todolistdone: {
+						title: "Done",
+						icon: "text"
+					},
+					backlog: {
+						title: "Backlog",
+						icon: "recycler"
+					},
+					introduction: {
+						title: "Hello!",
+						icon: "text"
+					}
+				}
+
+				function closeApplication(name) {
+					document.getElementById("window-" + name).remove();
+					document.getElementById("taskbar-" + name).remove();
+				}
+
+				function openApplication(name) {
+					let w = getNewWindow(name);
+					let t = getNewTaskbarItem(name);
+
+					w.onclick = function() {
+						activate();
+					}
+
+					t.onclick = function() {
+						activateOrDeactivate();
+					}
+
+					function activateOrDeactivate() {
+						if(w.classList.contains("active")) {
+							deactivate();
+						} else {
+							activate();
+						}
+					}
+
+					function deactivate() {
+						w.classList.remove("active");
+						t.classList.remove("active");
+					}
+
+					function activate() {
+						// Activate
+						let activeWindows = document.querySelectorAll("#working-area .window.active");
+						for (var i = activeWindows.length - 1; i >= 0; i--) {
+							activeWindows[i].classList.remove("active");
+						}
+
+						let activeTaskbarItems = document.querySelectorAll("#open-windows .active");
+						for (var i = activeTaskbarItems.length - 1; i >= 0; i--) {
+							activeTaskbarItems[i].classList.remove("active");
+						}
+
+						w.classList.add("active");
+						t.classList.add("active");
+					}
+
+					document.getElementById("working-area").appendChild(w);
+					document.getElementById("open-windows").children[0].appendChild(t);
+				}
+
+				// LET'S GO
+				updateClock();
+				// openApplication("todolist");
+				// openApplication("todolistdone");
+				// openApplication("backlog");
+				openApplication("introduction");
+			});
+		</script>
+	</head>
+	<body>
+		<div id="applications">
+			<div id="introduction" class="window">
+				<div>
+					<h3>Welcome to my website</h3>
+					<h4>About me</h4>
+					<ul>
+						<li>Ferdau Daems</li>
+						<li>31 years old</li>
+						<li>Living in Kaster, West-Vlaanderen</li>
+						<li>Got a wife and a 1 year old kid</li>
+						<li>Volleybal player</li>
+					</ul>
+					<h4>Technical stuff</h4>
+					<ul>
+						<li>Lead Android Developer at Aventri</li>
+						<li>HTML / JS hobbyist</li>
+						<li>Once made a Google Glass app</li>
+						<li>IoT &lt;3</li>
+						<li>I make chrome extensions to automate boring stuff</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<div id="working-area">
+		</div>
+		<div id="taskbar">
+			<div id="start-button"></div>
+			<div id="open-windows"><div></div></div>
+			<div id="clock"><div id="clock-value"></div></div>
+		</div>
+	</body>
+</html>
