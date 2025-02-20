@@ -62,8 +62,8 @@
 				position: absolute;
 				z-index: -1;
 				top: -2px;
-    			left: 0;
-    			right: 0;
+    				left: 0;
+    				right: 0;
 				border: 1px solid #dfdfdf;
 			}
 
@@ -310,10 +310,9 @@
 				color: #c0c0c0;
 				padding: 6px 10px;
 				margin-left: 0;
-
-				left: -32px;
-				top: 32px;
-				width: 96px;
+    				left: -56px; /* I don't like this */
+    				top: 56px; /* And this */
+    				width: 143px; /* And this */
 			}
 
 			#start-menu > div {
@@ -624,13 +623,10 @@
 					resume: {
 						title: "Curriculum Vitae",
 						icon: "text"
-					}
-				}
-
-				let games = {
+					},
 					scoundrel: {
 						title: "Scoundrel",
-						icon: "text"
+						icon: "game"
 					}
 				}
 
@@ -719,25 +715,9 @@
 					});
 				}
 
-				function populateGamesList() {
-					const list = document.getElementById('game-list');
-					Object.entries(games).map(item => {
-						let c1 = document.createElement("div");
-						let c2 = document.createElement("div");
-
-						c2.innerHTML = "<i class='filetype-"+item[1].icon+"'></i>" + item[1].title;
-						c1.appendChild(c2);
-						c1.onclick = function() {
-							launchApplication(item[0]);
-						};
-						list.appendChild(c1);
-					});
-				}
-
 				// LET'S GO
 				updateClock();
 				populateProgramList();
-				populateGamesList();
 				launchApplication("introduction");
 			});
 		</script>
@@ -841,12 +821,6 @@
 		<div id="start-menu" class="hidden">
 			<div>
 				<div id="start-menu-logo">FerdOS</div>
-				<div>
-					<div>Games</div>
-					<div>
-						<div id="game-list"></div>
-					</div>
-				</div>
 				<div>
 					<div>Programs</div>
 					<div>
