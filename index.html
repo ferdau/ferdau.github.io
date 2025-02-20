@@ -613,10 +613,6 @@
 
 				// APPLICATION MANAGEMENT
 				let applications = {
-					blog: {
-						title: "Blog",
-						icon: "text"
-					},
 					backlog: {
 						title: "Past projects",
 						icon: "recycler"
@@ -627,6 +623,13 @@
 					},
 					resume: {
 						title: "Curriculum Vitae",
+						icon: "text"
+					}
+				}
+
+				let games = {
+					scoundrel: {
+						title: "Scoundrel",
 						icon: "text"
 					}
 				}
@@ -716,9 +719,25 @@
 					});
 				}
 
+				function populateGamesList() {
+					const list = document.getElementById('game-list');
+					Object.entries(games).map(item => {
+						let c1 = document.createElement("div");
+						let c2 = document.createElement("div");
+
+						c2.innerHTML = "<i class='filetype-"+item[1].icon+"'></i>" + item[1].title;
+						c1.appendChild(c2);
+						c1.onclick = function() {
+							launchApplication(item[0]);
+						};
+						list.appendChild(c1);
+					});
+				}
+
 				// LET'S GO
 				updateClock();
 				populateProgramList();
+				populateGamesList();
 				launchApplication("introduction");
 			});
 		</script>
@@ -731,7 +750,7 @@
 					<h4>About me</h4>
 					<ul>
 						<li>Ferdau Daems</li>
-						<li>33 years old</li>
+						<li>36 years old</li>
 						<li>Living in Kaster, West-Vlaanderen</li>
 						<li>Got a wife and two lovely kids</li>
 						<li>Volleybal player</li>
@@ -749,6 +768,7 @@
 				<div>
 					<h4>Projects I worked on</h4>
 					<ul>
+						<li>Probably 40+ projects that should never see the daylight</li>
 						<li>Chrome extensions for automation</li>
 						<li>Google Glass app</li>
 						<li>Atlasian Forge app</li>
@@ -770,7 +790,7 @@
 						<li>Create requirements, documentation, and presentations</li>
 						<li>Help solve technical problems</li>
 						<li>Focus on reducing quick response time tickets</li>
-						<li>Implementation of SCRUM</li>
+						<li>Implementation of Scrum</li>
 					</ul>
 					<h6>Lead Android Developer – Sep. 2011 - Apr. 2022</h6>
 					<ul>
@@ -796,7 +816,7 @@
 					<h5>Technical Skills</h5>
 					<ul>
 						<li>Mobile app development (Android)</li>
-						<li>HTML / CSS / JS</li>
+						<li>Full Stack Developer</li>
 						<li>Chrome Extensions</li>
 						<li>API integrations</li>
 						<li>Database design (MYSQL, SQLITE)</li>
@@ -810,9 +830,9 @@
 					</ul>
 				</div>
 			</div>
-			<div id="blog">
+			<div id="scoundrel">
 				<div>
-					<h4>COMING SOON (or not).</h4>
+					<iframe src="scoundrel.html"></iframe>
 				</div>
 			</div>
 		</div>
@@ -821,6 +841,12 @@
 		<div id="start-menu" class="hidden">
 			<div>
 				<div id="start-menu-logo">FerdOS</div>
+				<div>
+					<div>Games</div>
+					<div>
+						<div id="game-list"></div>
+					</div>
+				</div>
 				<div>
 					<div>Programs</div>
 					<div>
